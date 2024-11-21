@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AdminRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -30,7 +31,7 @@ class AdminController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(AdminRequest $request): RedirectResponse
     {
         $admin = new User();
         $admin->name = $request->name;
@@ -51,17 +52,25 @@ class AdminController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(string $id): View
     {
-        //
+        $data['admin'] = User::findOrFail(decrypt($id));
+        return view('admin.admin_management.edit', $data);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(AdminRequest $request, string $id)
     {
-        //
+        $admin = User::findOrFail(decrypt($id));
+        $admin->name = $request->name;
+        $admin->email = $request->email;
+        if ($request->password) {
+            $admin->password = $request->password;
+        }
+        $admin->update();
+        return redirect()->route('admin.index');
     }
 
     /**
@@ -69,6 +78,8 @@ class AdminController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $admin = User::findOrFail(decrypt($id));
+        $admin->delete();
+        return redirect()->route('admin.index');
     }
 }
