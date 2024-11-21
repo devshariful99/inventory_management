@@ -27,10 +27,16 @@
         <div class="sidebar-wrapper scrollbar scrollbar-inner">
           <div class="sidebar-content">
             <ul class="nav nav-secondary">
-              <li class="nav-item">
+              <li class="nav-item {{ $page_slug == 'dashboard' ? ' active' : ''}}">
                 <a href="{{route('admin.dashboard')}}">
                   <i class="icon-home"></i>
                   <p>{{__('Dashboard')}}</p>
+                </a>
+              </li>
+              <li class="nav-item {{ $page_slug == 'admin' ? ' active' : ''}}">
+                <a href="{{route('admin.index')}}">
+                  <i class="icon-home"></i>
+                  <p>{{__('Admin Management')}}</p>
                 </a>
               </li>
               {{-- <li class="nav-item">
