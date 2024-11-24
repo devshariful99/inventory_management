@@ -40,6 +40,7 @@ class AdminController extends Controller
         $admin->password = $request->password;
         $admin->created_by = Auth::user()->id;
         $admin->save();
+        flash()->success('Admin created successfully');
         return redirect()->route('admin.index');
     }
 
@@ -73,6 +74,7 @@ class AdminController extends Controller
         }
         $admin->updated_by = Auth::user()->id;
         $admin->update();
+        flash()->success('Admin updated successfully');
         return redirect()->route('admin.index');
     }
 
@@ -85,6 +87,7 @@ class AdminController extends Controller
         $admin->deleted_by = Auth::user()->id;
         $admin->update();
         $admin->delete();
+        flash()->success('Admin deleted successfully');
         return redirect()->route('admin.index');
     }
     /**
@@ -96,6 +99,7 @@ class AdminController extends Controller
         $admin->status = !$admin->status;
         $admin->updated_by = Auth::user()->id;
         $admin->update();
+        flash()->success('Admin status updated successfully.');
         return redirect()->route('admin.index');
     }
 }
