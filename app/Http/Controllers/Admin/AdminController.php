@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
@@ -16,7 +17,7 @@ class AdminController extends Controller
      */
     public function index(): View
     {
-        $data['admins'] = User::latest()->get();
+        $data['admins'] = User::with(['creater'])->latest()->get();
         return view('admin.admin_management.index', $data);
     }
 
@@ -37,6 +38,7 @@ class AdminController extends Controller
         $admin->name = $request->name;
         $admin->email = $request->email;
         $admin->password = $request->password;
+        $admin->created_by = Auth::user()->id;
         $admin->save();
         return redirect()->route('admin.index');
     }
@@ -69,6 +71,7 @@ class AdminController extends Controller
         if ($request->password) {
             $admin->password = $request->password;
         }
+        $admin->updated_by = Auth::user()->id;
         $admin->update();
         return redirect()->route('admin.index');
     }
@@ -79,7 +82,20 @@ class AdminController extends Controller
     public function destroy(string $id)
     {
         $admin = User::findOrFail(decrypt($id));
+        $admin->deleted_by = Auth::user()->id;
+        $admin->update();
         $admin->delete();
+        return redirect()->route('admin.index');
+    }
+    /**
+     * Change the specified resource status.
+     */
+    public function status(string $id)
+    {
+        $admin = User::findOrFail(decrypt($id));
+        $admin->status = !$admin->status;
+        $admin->updated_by = Auth::user()->id;
+        $admin->update();
         return redirect()->route('admin.index');
     }
 }
