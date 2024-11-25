@@ -42,10 +42,11 @@
                                             </a>
                                             <ul class="dropdown-menu dropdown-menu-end">
                                                 <li>
+                                                    <a href="javascript:void(0)" data-admin_id="{{ encrypt($admin->id) }}" class="dropdown-item show">{{__('Show')}}</a>
                                                     <a href="{{route('admin.edit', encrypt($admin->id))}}" class="dropdown-item">{{__('Edit')}}</a>
                                                     <a href="{{route('admin.status', encrypt($admin->id))}}" class="dropdown-item">{{$admin->getStatusTitle()}}</a>
                                                     <a class="dropdown-item" href="javascript:void(0)"
-                                                        onclick='document.getElementById("delete-form{{ $loop->iteration }}").submit()'>
+                                                        onclick='confirmDelete(()=>document.getElementById("delete-form{{ $loop->iteration }}").submit())'>
                                                         {{ __('Delete') }}
                                                     </a>
 
@@ -69,4 +70,68 @@
             </div>
         </div>
     </div>
+    @include('admin.includes.details_modal', ['modal_title' => 'Admin Details'])
 @endsection
+
+@push('js')
+     <script>
+        $(document).ready(()=> {
+            $('.show').on('click',function() {
+                let id = $(this).data('admin_id');
+                let url = ("{{ route('admin.show', ['id']) }}");
+                let _url = url.replace('id', id);
+                $.ajax({
+                    url: _url,
+                    method: 'GET',
+                    dataType: 'json',
+                    success: (data)=> {
+                        var result = `
+                                <table class="table table-striped">
+                                    <tr>
+                                        <th class="text-nowrap">Name</th>
+                                        <th>:</th>
+                                        <td>${data.name}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-nowrap">Email</th>
+                                        <th>:</th>
+                                        <td>${data.email}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-nowrap">Status</th>
+                                        <th>:</th>
+                                        <td><span class="${data.getStatusClass}">${data.getStatus}</span></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-nowrap">Created Date</th>
+                                        <th>:</th>
+                                        <td>${data.created_time}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-nowrap">Created By</th>
+                                        <th>:</th>
+                                        <td>${data.creater ? data.creater.name : 'System'}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-nowrap">Updated Date</th>
+                                        <th>:</th>
+                                        <td>${data.updated_time}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-nowrap">Updated By</th>
+                                        <th>:</th>
+                                        <td>${data.updater ? data.updater.name : 'NULL'}</td>
+                                    </tr>
+                                </table>
+                                `;
+                        $('#modal_data').html(result);
+                        showModal('myModal');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error fetching admin data:', error);
+                    }
+                });
+            });
+        });
+    </script>
+@endpush

@@ -40,9 +40,28 @@
     </script>
     <link rel="stylesheet" href="{{asset('admin/assets/css/plugins.min.css')}}" />
     <link rel="stylesheet" href="{{asset('admin/assets/css/kaiadmin.min.css')}}" />
+    @stack('plugin-styles')
+    <link rel="stylesheet" href="{{asset('admin/css/custom.css')}}">
+    @stack('styles')
 
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    {{-- {{dd(session('success'))}} --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            @if (session('success'))
+                showAlert('success', '{{ session('success') }}');
+            @endif
+
+            @if (session('error'))
+                showAlert('error', '{{ session('error') }}');
+            @endif
+
+            @if (session('warning'))
+                showAlert('warning', '{{ session('warning') }}');
+            @endif
+        });
+    </script>
 </head>
 <body>
     <div class="wrapper">
@@ -69,5 +88,8 @@
     <script src="{{asset('admin/assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js')}}"></script>
     <!-- Kaiadmin JS -->
     <script src="{{asset('admin/assets/js/kaiadmin.min.js')}}"></script>
+    @stack('plugin-js')
+    <link rel="stylesheet" href="{{asset('admin/js/custom.js')}}">
+    @stack('js')
   </body>
 </html>

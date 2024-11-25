@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdminRequest;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -40,16 +41,23 @@ class AdminController extends Controller
         $admin->password = $request->password;
         $admin->created_by = Auth::user()->id;
         $admin->save();
-        flash()->success('Admin created successfully');
+        session()->flash('success', 'Admin created successfully');
         return redirect()->route('admin.index');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id): JsonResponse
     {
-        //
+        $admin = User::with(['creater', 'updater'])->findOrFail(decrypt($id));
+        $admin->getStatus = $admin->getStatus();
+        $admin->getStatusClass = $admin->getStatusClass();
+        $admin->getStatusTitle = $admin->getStatusTitle();
+        $admin->created_time = date('d M, Y', strtotime($admin->created_at));
+        $admin->updated_time = $admin->created_at != $admin->updated_at ? date('d M, Y', strtotime($admin->updated_at)) : "NULL";
+        return response()->json($admin);
+
     }
 
     /**
@@ -74,7 +82,7 @@ class AdminController extends Controller
         }
         $admin->updated_by = Auth::user()->id;
         $admin->update();
-        flash()->success('Admin updated successfully');
+        session()->flash('success', 'Admin updated successfully');
         return redirect()->route('admin.index');
     }
 
@@ -87,7 +95,7 @@ class AdminController extends Controller
         $admin->deleted_by = Auth::user()->id;
         $admin->update();
         $admin->delete();
-        flash()->success('Admin deleted successfully');
+        session()->flash('success', 'Admin deleted successfully');
         return redirect()->route('admin.index');
     }
     /**
@@ -99,7 +107,7 @@ class AdminController extends Controller
         $admin->status = !$admin->status;
         $admin->updated_by = Auth::user()->id;
         $admin->update();
-        flash()->success('Admin status updated successfully.');
+        session()->flash('success', 'Admin status changed successfully');
         return redirect()->route('admin.index');
     }
 }
