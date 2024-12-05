@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ProductManagement\CategoryController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -18,5 +19,8 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin-dashboard'], function (
     Route::resource('/admin', AdminController::class);
     Route::get('/admin/status/{id}', [AdminController::class, 'status'])->name('admin.status');
 
-
+    Route::group(['prefix' => 'product-management'], function () {
+        Route::resource('/category', CategoryController::class);
+        Route::get('/category/status/{id}', [CategoryController::class, 'status'])->name('category.status');
+    });
 });

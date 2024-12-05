@@ -39,23 +39,23 @@
                   <p>{{__('Admin Management')}}</p>
                 </a>
               </li>
-              {{-- <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#base">
+              <li class="nav-item {{ $page_slug == 'category' ? ' active submenu' : ''}}">
+                <a data-bs-toggle="collapse" href="#pm" class="{{ $page_slug == 'category' ? '' : 'collapsed'}}" aria-expanded="{{ $page_slug == 'category' ? 'true' : 'false'}}">
                   <i class="fas fa-layer-group"></i>
-                  <p>Base</p>
+                  <p>{{__('Product Management')}}</p>
                   <span class="caret"></span>
                 </a>
-                <div class="collapse" id="base">
+                <div class="collapse {{ $page_slug == 'category' ? ' show' : ''}}" id="pm">
                   <ul class="nav nav-collapse">
-                    <li>
-                      <a href="components/avatars.html">
-                        <span class="sub-item">Avatars</span>
+                    <li class="{{ $page_slug == 'category' ? ' active' : ''}}">
+                      <a href="{{route('category.index')}}">
+                        <span class="sub-item">{{__('Category')}}</span>
                       </a>
                     </li>
                   </ul>
                 </div>
               </li>
-              <li class="nav-item">
+              {{-- <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#submenu">
                   <i class="fas fa-bars"></i>
                   <p>Menu Levels</p>
